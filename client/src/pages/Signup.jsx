@@ -1,8 +1,16 @@
 import { Button, Label, TextInput } from 'flowbite-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 
 const Signup = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState) => !prevState);
+  };
+
+
   return (
     <div className='min-h-screen mt-20'>
       <div className='flex p-3 max-w-3xl gap-5 mx-auto flex-col md:flex-row md:items-center'>
@@ -26,11 +34,20 @@ const Signup = () => {
             </div>
             <div>
               <Label value='Email' />
-              <TextInput type='text' placeholder='johndoe@email.com' id='email' />
+              <TextInput type='email' placeholder='johndoe@email.com' id='email' />
             </div>
             <div>
               <Label value='Password' />
-              <TextInput type='text' placeholder='password' id='password' />
+              <div className='relative'>
+                <TextInput type={showPassword ? "text" : "password"} placeholder='password' id='password' />
+                <button
+                  type='button'
+                  onClick={togglePasswordVisibility}
+                  className='absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500'
+                >
+                  {showPassword ? <IoIosEye /> : <IoIosEyeOff />}
+                </button>
+              </div>
             </div>
 
             <Button gradientDuoTone='purpleToPink' type='submit'>
