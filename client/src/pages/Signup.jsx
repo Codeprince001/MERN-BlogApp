@@ -5,9 +5,28 @@ import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({});
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+      const data = await res.json();
+    } catch (error) {
+
+    }
   };
 
 
@@ -27,19 +46,19 @@ const Signup = () => {
 
         {/* right */}
         <div className='flex-1'>
-          <form className='flex flex-col gap-4'>
+          <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <div>
               <Label value='Username' />
-              <TextInput type='text' placeholder='username' id='username' />
+              <TextInput type='text' placeholder='username' id='username' onChange={handleChange} />
             </div>
             <div>
               <Label value='Email' />
-              <TextInput type='email' placeholder='johndoe@email.com' id='email' />
+              <TextInput type='email' placeholder='johndoe@email.com' id='email' onChange={handleChange} />
             </div>
             <div>
               <Label value='Password' />
               <div className='relative'>
-                <TextInput type={showPassword ? "text" : "password"} placeholder='password' id='password' />
+                <TextInput type={showPassword ? "text" : "password"} placeholder='password' id='password' onChange={handleChange} />
                 <button
                   type='button'
                   onClick={togglePasswordVisibility}
