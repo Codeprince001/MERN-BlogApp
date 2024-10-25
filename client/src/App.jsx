@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { Home, About, Dashboard, Project, Signin, Signup } from "./pages";
-import { Header } from "./components";
+import { Footer, Header } from "./components";
 
 const App = () => {
   return (
@@ -15,6 +15,7 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/projects" element={<Project />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 };
