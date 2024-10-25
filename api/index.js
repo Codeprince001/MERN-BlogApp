@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 import userRoute from "./routes/user.route.js";
 import authRoute from "./routes/auth.route.js";
+import { errorMiddlewareHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 app.use(express.json());
@@ -25,3 +26,5 @@ app.listen(3000, () => {
 
 app.use("/api/user", userRoute);
 app.use("/api/auth", authRoute);
+
+app.use(errorMiddlewareHandler);
