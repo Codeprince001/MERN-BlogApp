@@ -82,7 +82,7 @@ const Signup = () => {
             <div>
               <Label value='Password' />
               <div className='relative'>
-                <TextInput type={showPassword ? "text" : "password"} placeholder='password' id='password' onChange={handleChange} />
+                <TextInput type={showPassword ? "text" : "password"} placeholder='********' id='password' onChange={handleChange} />
                 <button
                   type='button'
                   onClick={togglePasswordVisibility}
