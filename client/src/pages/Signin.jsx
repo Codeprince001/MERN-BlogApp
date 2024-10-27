@@ -2,13 +2,15 @@ import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
+import { signInFailure, signInStart, signInSuccess } from '../redux/features/users/userSlice';
+import { useDispatch, useSelector } from "react-redux";
 
 const Signin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
@@ -21,12 +23,12 @@ const Signin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      return setErrorMessage("Please fill out all fields");
+      return dispatch(signInFailure("Please fill out all fields"));
     }
 
     try {
-      setLoading(true);
-      setErrorMessage(null);
+      dispatch(signInStart());
+
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -35,21 +37,19 @@ const Signin = () => {
       const data = await res.json();
 
       if (!res.ok) {  // if status code is not 2xx, handle it as an error
-        setErrorMessage(data.message || "An error occurred.");
-        setLoading(false);
+        dispatch(signInFailure(data.message || "An error occurred"));
         return;
       }
+
+
       if (res.ok) {
         navigate("/");
       }
-
-
-      setLoading(false);
+      dispatch(signInSuccess(data));
     }
 
     catch (error) {
-      setErrorMessage(error.message);
-      setLoading(false);
+      dispatch(signInFailure(error.message));
     }
   };
 
