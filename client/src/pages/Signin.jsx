@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { signInFailure, signInStart, signInSuccess } from '../redux/features/users/userSlice';
 import { useDispatch, useSelector } from "react-redux";
+import { Oauth } from '../components';
 
 const Signin = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,6 +36,7 @@ const Signin = () => {
         body: JSON.stringify(formData)
       });
       const data = await res.json();
+      console.log(data);
 
       if (!res.ok) {  // if status code is not 2xx, handle it as an error
         dispatch(signInFailure(data.message || "An error occurred"));
@@ -43,9 +45,11 @@ const Signin = () => {
 
 
       if (res.ok) {
+        dispatch(signInSuccess(data));
         navigate("/");
       }
-      dispatch(signInSuccess(data));
+
+
     }
 
     catch (error) {
@@ -96,14 +100,15 @@ const Signin = () => {
                     <Spinner size='sm' />
                     <span className='pl-3'>Loading...</span>
                   </>
-                ) : "Sign Up"
+                ) : "Sign In"
               }
             </Button>
+            <Oauth />
           </form>
 
           <div className='flex gap-2 text-sm mt-5 justify-center'>
             <span>Don't Have an account?</span>
-            <Link to="/sign-up" className='text-blue-500'>
+            <Link to="/signup" className='text-blue-500'>
               Sign Up
             </Link>
           </div>
