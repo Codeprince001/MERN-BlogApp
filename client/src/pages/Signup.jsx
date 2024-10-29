@@ -2,6 +2,7 @@ import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoIosEye, IoIosEyeOff } from "react-icons/io";
+import { Oauth } from '../components';
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -40,7 +41,7 @@ const Signup = () => {
         return;
       }
       if (res.ok) {
-        navigate("/signin");
+        navigate("/");
       }
 
 
@@ -103,6 +104,7 @@ const Signup = () => {
                 ) : "Sign Up"
               }
             </Button>
+            <Oauth />
           </form>
 
           <div className='flex gap-2 text-sm mt-5 justify-center'>
