@@ -17,7 +17,7 @@ const Oauth = () => {
   const handleGoogleClick = async () => {
 
     const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_acount" });
+    provider.setCustomParameters({ prompt: "select_account" });
 
 
     try {
