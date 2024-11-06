@@ -1,17 +1,39 @@
 import { Button, TextInput } from "flowbite-react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 
 const Profile = () => {
   const { currentUser } = useSelector((state) => state.user);
+  const [imgFile, setImgFile] = useState(null);
+  const [imgFileUrl, setImgFileUrl] = useState(null);
+  const filePickerRef = useRef();
+
+  useEffect(() => {
+    if (imgFile) {
+      uploadImage();
+    }
+  }, [imgFile]);
+
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImgFile(file);
+      setImgFileUrl(URL.createObjectURL(file));
+    }
+  };
+
+
+
 
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="text-center font-semibold text-3xl my-7">Profile</h1>
       <form className="flex flex-col gap-4">
-
-        <div className="w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full">
-          <img src={currentUser.profilePicture} alt="user" className="object-cover rounded-full w-full h-full border-8 border-[lightgray]" />
+        <input hidden type="file" accept="image/*" onChange={handleImageChange} ref={filePickerRef} />
+        <div className="w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full" onClick={() => filePickerRef.current.click()}>
+          <img src={imgFileUrl || currentUser.profilePicture} alt="user" className="object-cover rounded-full w-full h-full border-8 border-[lightgray]" />
         </div>
 
         <TextInput type="text" id="username" placeholder="username" defaultValue={currentUser.username} />
