@@ -17,3 +17,14 @@ export const test = async (req, res) => {
 
 
 };
+
+export const updateUserProfilePicture = async (req, res) => {
+  console.log(req);
+  const { userId, profilePictureUrl } = req.body;
+
+  try {
+    const updateUser = await User.findByIdAndUpdate(userId, { profilePicture: profilePictureUrl });
+  } catch (error) {
+
+  }
+};
