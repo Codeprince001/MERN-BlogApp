@@ -1,5 +1,7 @@
 import User from "../models/user.model.js";
 
+
+
 export const test = async (req, res) => {
   res.json({ message: "API Working" });
 
@@ -21,6 +23,7 @@ export const test = async (req, res) => {
 export const updateUserProfilePicture = async (req, res) => {
   console.log(req);
   const { userId, profilePictureUrl } = req.body;
+  console.log(req.body.file);
 
   try {
     const updateUser = await User.findByIdAndUpdate(userId, { profilePicture: profilePictureUrl });
