@@ -1,33 +1,66 @@
 import User from "../models/user.model.js";
+import * as dotenv from "dotenv";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+// import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
+dotenv.config();
 
+const bucketName = process.env.BUCKET_NAME;
+const accessKeyId = process.env.S3_ACCESS_KEY;
+const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY;
+const region = process.env.S3_BUCKET_REGION;
 
-export const test = async (req, res) => {
-  res.json({ message: "API Working" });
+const s3Client = new S3Client({
+  credentials: {
+    accessKeyId,
+    secretAccessKey
+  },
+  region
+});
 
-  const { username, email, password } = req.body;
-  if (!username || !email || !password || username === "" || password === "" || email === "") {
-    return res.status(400).json({ Message: "All fields are required" });
+export const updateUserProfile = async (req, res) => {
+  const { userId, profilePictureUrl } = req.body;
+  const file = req.file;
+  const fileKey = `profile-pictures/${Date.now()}_${file.originalname.substring(0, 5).trim()}`;
+
+  if (!file) {
+    return res.status(400).json({ error: "No file provided" });
   }
 
-  const newUser = new User({
-    username, email, password
-  });
-
-  await newUser.save();
-  res.json({ message: "Signup successful" });
-
-
-};
-
-export const updateUserProfilePicture = async (req, res) => {
-  console.log(req);
-  const { userId, profilePictureUrl } = req.body;
-  console.log(req.body.file);
-
   try {
-    const updateUser = await User.findByIdAndUpdate(userId, { profilePicture: profilePictureUrl });
-  } catch (error) {
 
+    // Upload file to s3 Bucket
+    const uploadParams = {
+      Bucket: bucketName,
+      Key: fileKey,
+      Body: file.buffer,
+      ContentType: file.mimetype
+    };
+
+    await s3Client.send(new PutObjectCommand(uploadParams));
+
+    // Generate a signed Url
+    // const getObjectParams = {
+    //   Bucket: bucketName,
+    //   Key: fileKey,
+    // };
+    // const signedUrl = await getSignedUrl(s3Client, new GetObjectCommand(getObjectParams), {
+    //   expiresIn: 3600,
+    // });
+
+    // const updateUser = await User.findByIdAndUpdate(userId, { profilePicture: signedUrl }, { new: true });
+    // console.log(updateUser);
+
+    // if (!updateUser) {
+    //   return res.status(404).json({ message: "User not found" });
+    // }
+
+    // res.status(200).json({
+    //   message: "Profile picture updated successfully",
+    //   profilePicture: signedUrl,
+    // });
+  } catch (error) {
+    console.error("Error uploading profile picture:", error);
+    res.status(500).json({ message: "Image upload failed" });
   }
 };
