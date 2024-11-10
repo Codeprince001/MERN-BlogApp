@@ -1,9 +1,12 @@
 import express from "express";
-import { test, updateUserProfilePicture } from "../controllers/user.controller.js";
+import { updateUserProfile } from "../controllers/user.controller.js";
+import { uploadSingle } from "../middlewares/multer.middleware.js";
+
 
 const router = express.Router();
 
-router.get("/test", test);
-router.patch("/update-profile-picture", updateUserProfilePicture);
+
+
+router.put("/update-profile", uploadSingle, updateUserProfile);
 
 export default router;
