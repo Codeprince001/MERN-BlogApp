@@ -6,24 +6,26 @@ import { useSelector } from "react-redux";
 const Profile = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [imgFile, setImgFile] = useState(null);
-  const [imgFileUrl, setImgFileUrl] = useState(null);
+  const [imgFileUrl, setImgFileUrl] = useState(currentUser.profilePicture);
   const filePickerRef = useRef();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("image", imgFile);
+    if (currentUser.profilePicture !== imgFile) {
+      formData.append("image", imgFile);
+    }
     formData.append("username", e.target.username.value);
     formData.append("email", e.target.email.value);
+    formData.append("userId", currentUser._id);
 
 
     try {
 
-      const response = await fetch("api/user/upload-profile-picture", {
-        method: "POST",
+      const response = await fetch("api/user/update-profile", {
+        method: "PUT",
         body: formData,
-        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
       const data = await response.json();
