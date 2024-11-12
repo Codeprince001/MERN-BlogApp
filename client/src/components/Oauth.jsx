@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 
 const Oauth = () => {
   const auth = getAuth(app);
+  console.log(auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
