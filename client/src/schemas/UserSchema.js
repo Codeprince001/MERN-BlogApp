@@ -9,4 +9,6 @@ export const profileSchema = z.object({
     .regex(/[A-Z]/, "\n Password must contain at least one uppercase letter.\n")
     .regex(/[a-z]/, "\n Password must contain at least one lowercase letter.\n")
     .regex(/[0-9]/, "\n Password must contain at least one number.\n")
+    .max(20, "Password cannot exceed 20 characters")
+    .optional()
 });
