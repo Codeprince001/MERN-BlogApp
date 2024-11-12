@@ -50,11 +50,11 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(400, "Invalid Password"));
     }
 
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     const { password: passwd, ...rest } = validUser._doc;
 
-    res.status(200).cookie("access_token", token, { httpOnly: true }).json(rest);
+    res.status(200).cookie("access_token", token, { httpOnly: true, maxAge: 60 * 60 * 1000 }).json(rest);
   } catch (error) {
     next(error);
   }
@@ -67,7 +67,7 @@ export const google = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "6h" });
       const { password, ...rest } = user._doc;
       res.status(200).cookie("access_token", token, {
         httpOnly: true,
@@ -81,18 +81,18 @@ export const google = async (req, res, next) => {
         password: hashedPassword,
         profilePicture: googlePhotoUrl
       });
-      // console.log(newUser);
 
       await newUser.save();
 
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "6h" });
 
       const { password, ...rest } = newUser._doc;
 
-      res.status(200).cookie("access_token", token, { httpOnly: true }).json(rest);
+      res.status(200).cookie("access_token", token,
+        { httpOnly: true, maxAge: 60 * 60 * 1000 }).json(rest);
     }
 
   } catch (error) {
-    console.log(error);
+    next(errorHandler(500, error.message));
   };
 };
