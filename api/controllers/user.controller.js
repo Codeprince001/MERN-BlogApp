@@ -19,7 +19,7 @@ const s3Client = new S3Client({
 });
 
 export const updateUserProfile = async (req, res) => {
-  const { userId } = req.user;
+  const { id } = req.user;
   const file = req.file;
   let signedUrl;
 
@@ -53,9 +53,9 @@ export const updateUserProfile = async (req, res) => {
       ...(file && { profilePicture: signedUrl }),
     };
 
-    delete updateData.userId;
+    delete updateData.id;
     delete updateData.email;
-    const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
