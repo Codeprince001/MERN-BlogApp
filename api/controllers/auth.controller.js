@@ -26,9 +26,23 @@ export const signup = async (req, res, next) => {
     });
 
     await newUser.save();
-    res.json({ message: "Signup successful" });
+
+    // generate JWT token 
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+    // exclude password from the response
+    const { password: passwd, ...userData } = newUser._doc;
+
+    res
+      .status(201)
+      .cookie("access_token", token, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 // 6 hours
+      })
+      .json({ message: "Signup successful", user: userData });
+
   } catch (error) {
-    next(error);
+    next(errorHandler(400, "Signup failed"));
   }
 };
 
@@ -50,11 +64,11 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(400, "Invalid Password"));
     }
 
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
     const { password: passwd, ...rest } = validUser._doc;
 
-    res.status(200).cookie("access_token", token, { httpOnly: true, maxAge: 60 * 60 * 1000 }).json(rest);
+    res.status(200).cookie("access_token", token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }).json(rest);
   } catch (error) {
     next(error);
   }
@@ -67,7 +81,7 @@ export const google = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "6h" });
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
       const { password, ...rest } = user._doc;
       res.status(200).cookie("access_token", token, {
         httpOnly: true,
@@ -84,12 +98,12 @@ export const google = async (req, res, next) => {
 
       await newUser.save();
 
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "6h" });
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
       const { password, ...rest } = newUser._doc;
 
       res.status(200).cookie("access_token", token,
-        { httpOnly: true, maxAge: 60 * 60 * 1000 }).json(rest);
+        { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }).json(rest);
     }
 
   } catch (error) {
