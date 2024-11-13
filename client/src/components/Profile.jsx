@@ -38,15 +38,11 @@ const Profile = () => {
       return;
     }
 
-    console.log(result);
 
     // Reset errors if form is valid
-    setErrors({});
+    // setErrors({});
 
     const formData = new FormData();
-    if (imgFile) {
-      formData.append("image", imgFile);
-    }
     formData.append("username", e.target.username.value);
     formData.append("email", e.target.email.value);
     formData.append("userId", currentUser._id);
@@ -56,17 +52,21 @@ const Profile = () => {
       formData.append("password", e.target.password.value);
     }
 
+    if (imgFile) {
+      formData.append("image", imgFile);
+    }
+
 
     try {
       // dispatch(updateStart());
-      const response = await fetch(`api/user/update-profile`, {
+      const response = await fetch("api/user/update-profile", {
         method: "PUT",
         body: formData,
       });
 
       const data = await response.json();
       console.log("data", data);
-      dispatch(signInSuccess(data.user));
+      dispatch(updateSuccess(data.user));
 
       if (!response.ok) {  // if status code is not 2xx, handle it as an error
         dispatch(signInFailure(data.message || "Failed to upload Image"));
@@ -79,6 +79,7 @@ const Profile = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    console.log(file);
     if (file) {
       setImgFile(file);
       setImgFileUrl(URL.createObjectURL(file));
