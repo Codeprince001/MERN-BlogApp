@@ -1,4 +1,4 @@
-import { Button, TextInput } from "flowbite-react";
+import { Alert, Button, TextInput } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { profileSchema } from "../schemas/UserSchema";
@@ -13,6 +13,7 @@ const Profile = () => {
   const [imgFile, setImgFile] = useState(null);
   const [imgFileUrl, setImgFileUrl] = useState(currentUser.profilePicture);
   const [errors, setErrors] = useState({});
+  const [updateUserSucces, setUpdateUserSuccess] = useState(null);
   const [user, setUser] = useState(currentUser || {
     username: "",
     email: "",
@@ -40,7 +41,7 @@ const Profile = () => {
 
 
     // Reset errors if form is valid
-    // setErrors({});
+    setErrors({});
 
     const formData = new FormData();
     formData.append("username", e.target.username.value);
@@ -65,12 +66,13 @@ const Profile = () => {
       });
 
       const data = await response.json();
-      console.log("data", data);
-      dispatch(updateSuccess(data.user));
 
       if (!response.ok) {  // if status code is not 2xx, handle it as an error
         dispatch(signInFailure(data.message || "Failed to upload Image"));
         return;
+      } else {
+        dispatch(updateSuccess(data.user));
+        setUpdateUserSuccess("User's Profile Updated Successfully");
       }
     } catch (error) {
 
@@ -105,11 +107,12 @@ const Profile = () => {
         <Button type="submit" gradientDuoTone="purpleToBlue" outline>
           Update
         </Button>
-        <div className="text-red-500 flex justify-between mt-5">
-          <span className="cursor-pointer">Delete Account</span>
-          <span className="cursor-pointer">Sign Out</span>
-        </div>
       </form>
+      <div className="text-red-500 flex justify-between mt-5">
+        <span className="cursor-pointer">Delete Account</span>
+        <span className="cursor-pointer">Sign Out</span>
+      </div>
+      {updateUserSucces && <Alert color="success" className="mt-5">{updateSuccess}</Alert>}
     </div >
   );
 };
