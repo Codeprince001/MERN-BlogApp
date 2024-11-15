@@ -5,6 +5,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from '../redux/features/theme/themeSlice';
+import { signoutSuccess } from '../redux/features/users/userSlice';
 
 
 const Header = () => {
@@ -12,6 +13,28 @@ const Header = () => {
   const { currentUser } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const { theme } = useSelector((state) => state.theme);
+
+
+
+
+
+  const handleSignout = async () => {
+    try {
+      const res = await fetch("/api/user/signout/", {
+        method: "POST"
+      });
+
+      const data = res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
 
 
   return (
@@ -39,7 +62,7 @@ const Header = () => {
           }
         </Button>
         {currentUser ? (
-          <Dropdown className='p-1' arrowIcon={false} inline label={<Avatar alt='user' img={currentUser.profilePicture} rounded />}>
+          <Dropdown className='p-1' arrowIcon={false} inline label={<Avatar alt='user' img={currentUser.profilePicture} rounded className='border-2 rounded-full' />}>
             <Dropdown.Header>
               <span className='block text-sm '>{currentUser.username}</span>
               <span className='block text-sm font-medium truncate'>{currentUser.email}</span>
@@ -49,7 +72,7 @@ const Header = () => {
                 <Dropdown.Item>Profile</Dropdown.Item>
               </Link>
               <Dropdown.Divider />
-              <Dropdown.Item>Signout</Dropdown.Item>
+              <Dropdown.Item onClick={handleSignout}>Signout</Dropdown.Item>
             </Dropdown.Header>
           </Dropdown>
         ) : (
