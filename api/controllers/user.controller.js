@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import * as dotenv from "dotenv";
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import bcryptjs from "bcryptjs";
 
 dotenv.config();
 
@@ -19,7 +20,13 @@ const s3Client = new S3Client({
 });
 
 export const updateUserProfile = async (req, res) => {
-  const { id } = req.user;
+  const { userId: id } = req.params;
+  if (req.user.id != req.params.userId) {
+    return next(errorHandler(403, "You are not authorized to update this user"));
+  }
+  if (req.body.password) {
+    req.body.password = bcryptjs.hashSync(req.body.password, 10);
+  }
   const file = req.file;
   let signedUrl;
 
@@ -70,4 +77,17 @@ export const updateUserProfile = async (req, res) => {
     console.error("Error uploading profile picture:", error);
     res.status(500).json({ message: "Image upload failed" });
   }
+};
+
+export const deleteUser = async (req, res, next) => {
+  if (req.user.id != req.params.userId) {
+    return next(errorHandler(403, "You are not allowed to delete this user"));
+  }
+  try {
+    await User.findByIdAndDelete(req.params.userId);
+    res.status(200).json("User has been deleted");
+  } catch (error) {
+    next(error);
+  }
+
 };
