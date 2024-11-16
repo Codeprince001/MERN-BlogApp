@@ -7,11 +7,12 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const { currentUser, error } = useSelector((state) => state.user);
+  const { currentUser, error, loading } = useSelector((state) => state.user);
 
 
   const [imgFile, setImgFile] = useState(null);
@@ -159,9 +160,14 @@ const Profile = () => {
         {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
         <TextInput type="password" id="password" placeholder="password" />
         {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-        <Button type="submit" gradientDuoTone="purpleToBlue" outline>
-          Update
+        <Button type="submit" gradientDuoTone="purpleToBlue" outline disabled={loading}>
+          {loading ? "loading..." : "Update"}
         </Button>
+        {
+          currentUser.isAdmin && (
+            <Link to={"/create-post"}><Button type="button" gradientDuoTone="cyanToBlue" className="w-full">Create post</Button></Link>
+          )
+        }
       </form>
 
 
