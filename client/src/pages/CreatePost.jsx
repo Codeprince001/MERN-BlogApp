@@ -27,7 +27,7 @@ const CreatePost = () => {
           <FileInput type="file" accept='image/*' />
           <Button type="button" gradientDuoTone="purpleToBlue" size="sm" outline>Upload image</Button>
         </div>
-        <ReactQuill theme='snow' value={post} onChange={setPost} className='h-72 mb-12' placeholder='Enter text here...' />
+        <ReactQuill theme='snow' required value={post} onChange={setPost} className='h-72 mb-12' placeholder='Enter text here...' />
         <Button type='submit' gradientDuoTone='purpleToPink'>Publish</Button>
       </form>
     </div>
