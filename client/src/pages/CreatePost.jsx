@@ -4,9 +4,42 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 const CreatePost = () => {
-
-
   const [post, setPost] = useState();
+  const [imgFile, setImgFile] = useState();
+  const [imageUplaodError, setImageUplaodError] = useState();
+  // const [formData, setFormData] = useState({});
+  const [imageFileUrl, setImageFileUrl] = useState();
+
+  const handleUploadImage = async () => {
+    try {
+      if (!imgFile) {
+        setImageUplaodError("Please select an Image");
+        return;
+      }
+
+      setImageUplaodError(null);
+
+      const formData = new FormData();
+      formData.append("image", imgFile);
+
+      const response = await fetch("/api/post/upload-postImage/", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        setImageUplaodError("Error Fetching Response");
+        return;
+      }
+
+      const data = await response.json();
+      setImageFileUrl(data.signedUrl); // Store the signed URL
+      console.log("Image uploaded successfully:", data.signedUrl);
+
+    } catch (error) {
+      setImageUplaodError("Image Upload Failed");
+    }
+  };
 
 
   return (
@@ -24,12 +57,14 @@ const CreatePost = () => {
         </Select>
 
         <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
-          <FileInput type="file" accept='image/*' />
-          <Button type="button" gradientDuoTone="purpleToBlue" size="sm" outline>Upload image</Button>
+          <FileInput type="file" accept='image/*' onChange={(e) => setImgFile(e.target.files[0])} />
+          <Button type="button" gradientDuoTone="purpleToBlue" size="sm" outline onClick={handleUploadImage}>Upload image</Button>
         </div>
         <ReactQuill theme='snow' required value={post} onChange={setPost} className='h-72 mb-12' placeholder='Enter text here...' />
         <Button type='submit' gradientDuoTone='purpleToPink'>Publish</Button>
       </form>
+
+      <img src={imageFileUrl} />
     </div>
   );
 };
