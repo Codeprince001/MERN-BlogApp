@@ -5,6 +5,7 @@ import userRoute from "./routes/user.route.js";
 import authRoute from "./routes/auth.route.js";
 import { errorMiddlewareHandler } from "./middlewares/error.middleware.js";
 import CookieParser from "cookie-parser";
+import postRoutes from "./routes/post.route.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ mongoose.connect(process.env.MONGODb_URI)
 
 app.use("/api/user", userRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/post", postRoutes);
 
 app.use(errorMiddlewareHandler);
 
