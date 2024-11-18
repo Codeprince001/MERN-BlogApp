@@ -53,7 +53,8 @@ export const postImageUpload = async (req, res, next) => {
 
   try {
     if (file) {
-      const fileKey = `post-Images/${Date.now()}_${file.originalname.substring(0, 10).trim(" ")}`;
+      const time = new Date().getTime();
+      const fileKey = `post-Images/${time}_${file.originalname.substring(0, 10).trim(" ")}`;
       // Upload file to s3 Bucket
       const uploadParams = {
         Bucket: bucketName,
