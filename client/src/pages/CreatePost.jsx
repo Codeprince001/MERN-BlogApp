@@ -1,9 +1,14 @@
+import React, { useRef, useState } from 'react';
 import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react';
-import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { useNavigate } from 'react-router-dom';
+import LoadingBar from 'react-top-loading-bar';
 
 const CreatePost = () => {
+  const navigate = useNavigate();
+  const loadingBarRef = useRef(null);
+
   const [formData, setFormData] = useState({
     title: '',
     category: 'uncategorized',
@@ -16,6 +21,12 @@ const CreatePost = () => {
     isUploading: false,
     errorMessage: null,
     successMessage: null,
+  });
+
+  const [publishState, setPublishState] = useState({
+    isPublishing: false,
+    publishErrorMessage: null,
+    publishSuccessMessage: null,
   });
 
   const handleInputChange = (field, value) => {
@@ -31,6 +42,7 @@ const CreatePost = () => {
     }
 
     setUploadState({ isUploading: true, errorMessage: null, successMessage: null });
+    loadingBarRef.current.continuousStart();
 
     try {
       const uploadFormData = new FormData();
@@ -47,24 +59,72 @@ const CreatePost = () => {
 
       const data = await response.json();
       handleInputChange('imageFileUrl', data.signedUrl);
+
       setUploadState({
         isUploading: false,
         successMessage: 'Image uploaded successfully!',
         errorMessage: null,
       });
+      loadingBarRef.current.complete();
     } catch (error) {
       setUploadState({ isUploading: false, errorMessage: error.message, successMessage: null });
+      loadingBarRef.current.complete();
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Submitting post:', formData);
-    // Handle submission logic here (e.g., API call)
+    setPublishState({ isPublishing: true, publishErrorMessage: null, publishSuccessMessage: null });
+    loadingBarRef.current.continuousStart();
+
+    const { title, category, imageFileUrl, content } = formData;
+    const submissionData = { title, category, content, imageFileUrl };
+
+    try {
+      const res = await fetch('/api/post/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submissionData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setPublishState({
+          isPublishing: false,
+          publishErrorMessage: data.message,
+          publishSuccessMessage: null,
+        });
+        loadingBarRef.current.complete();
+        return;
+      }
+
+      setPublishState({
+        isPublishing: false,
+        publishErrorMessage: null,
+        publishSuccessMessage: 'Post successfully published!',
+      });
+
+      loadingBarRef.current.complete();
+      navigate(`/post/${data.savedPost.slug}`);
+
+    } catch (error) {
+      setPublishState({
+        isPublishing: false,
+        publishErrorMessage: error.message,
+        publishSuccessMessage: null,
+      });
+      loadingBarRef.current.complete();
+    }
   };
 
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
+      {/* Progress Bar */}
+      <LoadingBar color="#4F46E5" ref={loadingBarRef} height={3} />
+
       <h1 className="text-center text-3xl my-7 font-semibold">Create Post</h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <TextInput
@@ -124,9 +184,11 @@ const CreatePost = () => {
           className="h-72 mb-12"
           placeholder="Enter text here..."
         />
-        <Button type="submit" gradientDuoTone="purpleToPink">
-          Publish
+        <Button type="submit" gradientDuoTone="purpleToPink" disabled={publishState.isPublishing}>
+          {publishState.isPublishing ? 'Publishing...' : 'Publish'}
         </Button>
+        {publishState.publishErrorMessage && <Alert color="failure">{publishState.publishErrorMessage}</Alert>}
+        {publishState.publishSuccessMessage && <Alert color="success">{publishState.publishSuccessMessage}</Alert>}
       </form>
     </div>
   );
