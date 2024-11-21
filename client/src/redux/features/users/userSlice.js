@@ -30,7 +30,7 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    updateStart: () => {
+    updateStart: (state) => {
       state.loading = true;
       state.error = null;
     },
