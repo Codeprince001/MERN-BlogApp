@@ -52,7 +52,8 @@ export const userSlice = createSlice({
       state.error = null;
       state.loading = false;
     }
-  });
+  },
+});
 
 export const { signoutSuccess, deleteUserFailure, deleteUserStart, deleteUserSuccess, signInFailure, signInStart, signInSuccess, updateStart, updateFailure, updateSuccess } = userSlice.actions;
 
