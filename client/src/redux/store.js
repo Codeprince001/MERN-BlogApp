@@ -18,7 +18,7 @@ const persistConfig = {
   key: "root",
   storage,
   version: 1,
-  transforms: [expireInTransfrom(expiresIn, expirationKey, [])],
+  transforms: [expireInTransfrom(expiresIn, expirationKey)],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -26,7 +26,18 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false })
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [
+          "persist/PERSIST",
+          "persist/REHYDRATE",
+          "persist/FLUSH",
+          "persist/PAUSE",
+          "persist/PURGE",
+          "persist/REGISTER",
+        ],
+      },
+    }),
 });
 
 export const persistor = persistStore(store);
