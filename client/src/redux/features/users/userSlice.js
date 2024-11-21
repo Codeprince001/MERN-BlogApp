@@ -52,17 +52,7 @@ export const userSlice = createSlice({
       state.error = null;
       state.loading = false;
     }
-
-  },
-  // extraReducers: (builder) => {
-  //   builder.addCase("persist/REHYDRATE", (state, action) => {
-  //     if (action.payload?.user && typeof action.payload.user === "object") {
-  //       return { ...state, ...action.payload.user };
-  //     }
-  //     return state; // Fall back to initialState if rehydrated data is invalid
-  //   });
-  // },
-});
+  });
 
 export const { signoutSuccess, deleteUserFailure, deleteUserStart, deleteUserSuccess, signInFailure, signInStart, signInSuccess, updateStart, updateFailure, updateSuccess } = userSlice.actions;
 
