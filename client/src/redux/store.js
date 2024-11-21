@@ -18,7 +18,14 @@ const persistConfig = {
   key: "root",
   storage,
   version: 1,
-  transforms: [expireInTransfrom(expiresIn, expirationKey)],
+  transforms: [expireInTransfrom(expiresIn, expirationKey, {
+    user: {
+      currentUser: null,
+      error: null,
+      loading: false
+    },
+    theme: { theme: "light" }
+  })],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
