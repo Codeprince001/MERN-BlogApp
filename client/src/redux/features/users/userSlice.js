@@ -26,9 +26,9 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
-    updateFailure: () => {
-      state.loading = false,
-        state.error = action.payload;
+    updateFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
     },
     updateStart: () => {
       state.loading = true;
@@ -43,7 +43,7 @@ export const userSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
-    deleteUserFailure: (state) => {
+    deleteUserFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
@@ -53,7 +53,15 @@ export const userSlice = createSlice({
       state.loading = false;
     }
 
-  }
+  },
+  // extraReducers: (builder) => {
+  //   builder.addCase("persist/REHYDRATE", (state, action) => {
+  //     if (action.payload?.user && typeof action.payload.user === "object") {
+  //       return { ...state, ...action.payload.user };
+  //     }
+  //     return state; // Fall back to initialState if rehydrated data is invalid
+  //   });
+  // },
 });
 
 export const { signoutSuccess, deleteUserFailure, deleteUserStart, deleteUserSuccess, signInFailure, signInStart, signInSuccess, updateStart, updateFailure, updateSuccess } = userSlice.actions;
