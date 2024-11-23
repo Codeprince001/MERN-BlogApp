@@ -50,6 +50,7 @@ export const postImageUpload = async (req, res, next) => {
 
 
   try {
+
     if (file) {
       const time = new Date().getTime();
       const fileKey = `post-Images/${time}_${file.originalname.substring(0, 10).trim(" ")}`;
@@ -66,14 +67,12 @@ export const postImageUpload = async (req, res, next) => {
       // Generate a signed Url
       signedUrl = await getSignedUrl(s3Client, new GetObjectCommand({
         Bucket: bucketName,
-        Key: key,
+        Key: fileKey,
       }), {
         expiresIn: 3600, // Expires in 1 hour
       });
 
     }
-
-
     res.status(200).json({
       message: "Profile updated successfully",
       signedUrl,
