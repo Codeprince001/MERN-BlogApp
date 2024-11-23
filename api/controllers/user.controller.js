@@ -45,11 +45,12 @@ export const updateUserProfile = async (req, res) => {
       await s3Client.send(new PutObjectCommand(uploadParams));
 
       // Generate a signed Url
-      const getObjectParams = {
+      signedUrl = await getSignedUrl(s3Client, new GetObjectCommand({
         Bucket: bucketName,
-        Key: fileKey,
-      };
-      signedUrl = await getSignedUrl(s3Client, new GetObjectCommand(getObjectParams),);
+        Key: key,
+      }), {
+        expiresIn: 3600, // Expires in 1 hour
+      });
     }
 
 
