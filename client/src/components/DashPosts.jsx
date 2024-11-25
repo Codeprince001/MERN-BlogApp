@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 const DashPosts = () => {
   const [userPosts, setUserPosts] = useState([]);
+  const [showmore, setShowmore] = useState(true);
   const { currentUser, error, loading } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -16,7 +17,9 @@ const DashPosts = () => {
         const data = await res.json();
         if (res.ok) {
           setUserPosts(data.posts);
-          console.log(data);
+          if (data.posts.length < 9) {
+            setShowmore(false);
+          }
         }
       } catch (error) {
         console.log(error.message);
@@ -27,8 +30,26 @@ const DashPosts = () => {
       fetchPosts();
     }
   }, [currentUser._id]);
+
+
+  const handleShowMore = async () => {
+    const startIndex = userPosts.length;
+    try {
+      const res = await fetch(`/api/post/getPosts?userId=${currentUser._id}&startIndex=${startIndex}`);
+      const data = await res.json();
+      if (res.ok) {
+        setUserPosts((prev) => [...prev, ...data.posts]);
+        if (data.posts.length < 4) {
+          setShowmore(false);
+        }
+      }
+    } catch (error) {
+
+    }
+  };
+
   return (
-    <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
+    <div className='table-auto overflow-x-scroll overflow-y-hidden md:mx-auto p-3 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {currentUser.isAdmin && userPosts.length > 0 ?
         <div>
           <Table hoverable className='shadow-md'>
@@ -55,9 +76,8 @@ const DashPosts = () => {
                 </Table.Body>
               );
             })}
-
-
           </Table>
+          {showmore && <button onClick={handleShowMore} className="w-full text-teal-500 items-center text-center text-sm py-7 mx-auto">Show more</button>}
         </div>
         : (
           <p>No Post Yet!</p>
