@@ -1,10 +1,11 @@
 import { Sidebar } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { FaUser } from "react-icons/fa";
+import { FaRegEdit, FaUser } from "react-icons/fa";
 import { IoDocumentText, IoLogOutOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { signoutSuccess } from "../redux/features/users/userSlice";
+
 
 
 const DashSidebar = () => {
@@ -51,9 +52,14 @@ const DashSidebar = () => {
             Profile
           </Sidebar.Item>
           {currentUser.isAdmin && (
-            <Sidebar.Item onClick={() => navigate("/dashboard?tab=posts")} active={tab === "posts"} icon={IoDocumentText} >
-              Posts
-            </Sidebar.Item>
+            <>
+              <Sidebar.Item onClick={() => navigate("/dashboard?tab=posts")} active={tab === "posts"} icon={IoDocumentText} >
+                Posts
+              </Sidebar.Item>
+              <Sidebar.Item onClick={() => navigate("/create-post")} icon={FaRegEdit} >
+                Create post
+              </Sidebar.Item>
+            </>
           )}
 
           <Sidebar.Item icon={IoLogOutOutline} className="cursor-pointer" onClick={handleSignout}>
