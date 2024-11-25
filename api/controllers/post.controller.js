@@ -69,7 +69,7 @@ export const postImageUpload = async (req, res, next) => {
         Bucket: bucketName,
         Key: fileKey,
       }), {
-        expiresIn: 3600, // Expires in 1 hour
+        expiresIn: 7 * 24 * 3600, // Expires in 1 hour
       });
 
     }
