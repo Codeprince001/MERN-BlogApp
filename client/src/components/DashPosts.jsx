@@ -1,13 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from "react-redux";
 import { Table } from "flowbite-react";
 import { Link } from "react-router-dom";
+import PopupModal from '../util/PopupModal';
+import LoadingBar from 'react-top-loading-bar';
+
+
 
 
 const DashPosts = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [showmore, setShowmore] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [postToDelete, setPostToDelete] = useState();
   const { currentUser, error, loading } = useSelector((state) => state.user);
+
+  const loadingBarRef = useRef(null);
+
 
   useEffect(() => {
 
@@ -39,7 +48,7 @@ const DashPosts = () => {
       const data = await res.json();
       if (res.ok) {
         setUserPosts((prev) => [...prev, ...data.posts]);
-        if (data.posts.length < 4) {
+        if (data.posts.length < 9) {
           setShowmore(false);
         }
       }
@@ -48,8 +57,31 @@ const DashPosts = () => {
     }
   };
 
+  const handleDeletePost = async () => {
+    setShowModal(false);
+    try {
+      const res = await fetch(`/api/post/deletepost/${postToDelete}/${currentUser._id}`, {
+        method: "DELETE"
+      });
+      loadingBarRef.current.continuousStart();
+
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      }
+      setUserPosts((prev) => prev.filter((post) => post._id !== postToDelete));
+      loadingBarRef.current.complete();
+
+    } catch (error) {
+      console.log(error);
+      loadingBarRef.current.complete();
+
+    }
+  };
+
   return (
     <div className='table-auto overflow-x-scroll overflow-y-hidden md:mx-auto p-3 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
+      <LoadingBar color="#4F46E5" ref={loadingBarRef} height={4} />
       {currentUser.isAdmin && userPosts.length > 0 ?
         <div>
           <Table hoverable className='shadow-md'>
@@ -70,7 +102,7 @@ const DashPosts = () => {
                     <Table.Cell><Link to={`/post/${post.slug}`}><img src={post?.image} alt={post.title} className='w-20 h-10 object-fill ' /></Link></Table.Cell>
                     <Table.Cell><Link to={`/post/${post.slug}`} className='font-medium text-gray-700 dark:text-white'>{post.title}</Link></Table.Cell>
                     <Table.Cell>{post.category}</Table.Cell>
-                    <Table.Cell><span className='font-medium text-red-600 hover:underline cursor-pointer'>Delete</span></Table.Cell>
+                    <Table.Cell><span className='font-medium text-red-600 hover:underline cursor-pointer' onClick={() => { setShowModal(true); setPostToDelete(post._id); }}>Delete</span></Table.Cell>
                     <Table.Cell><Link to={`/update-post/${post._id}`} ><span className='text-teal-500 hover:underline cursor-pointer'>edit</span></Link></Table.Cell>
                   </Table.Row>
                 </Table.Body>
@@ -80,8 +112,11 @@ const DashPosts = () => {
           {showmore && <button onClick={handleShowMore} className="w-full text-teal-500 items-center text-center text-sm py-7 mx-auto">Show more</button>}
         </div>
         : (
-          <p>No Post Yet!</p>
+          <div className='flex justify-center items-center mx-auto my-auto'>
+            <p className='text-4xl'>No Post Yet!</p>
+          </div>
         )}
+      <PopupModal showModal={showModal} onClose={() => setShowModal(false)} onConfirm={handleDeletePost} title="Are you sure you want to delete post" />
     </div>
   );
 };
