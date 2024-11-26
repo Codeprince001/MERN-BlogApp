@@ -1,13 +1,12 @@
-import { Alert, Button, Modal, TextInput } from "flowbite-react";
+import { Alert, Button, TextInput } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { profileSchema } from "../schemas/UserSchema";
 import { signoutSuccess, updateStart, updateFailure, updateSuccess, deleteUserFailure, deleteUserStart, deleteUserSuccess } from "../redux/features/users/userSlice";
-import { CircularProgressbar } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
 
-import { HiOutlineExclamationCircle } from "react-icons/hi";
+
 import { Link } from "react-router-dom";
+import PopupModal from "../util/PopupModal";
 
 
 const Profile = () => {
@@ -178,20 +177,8 @@ const Profile = () => {
       {updateUserSuccess && <Alert color="success" className="mt-5">{updateUserSuccess}</Alert>}
       {error && <Alert color="failure" className="mt-5">{error}</Alert>}
 
-      <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
-        <Modal.Header />
-        <Modal.Body>
-          <div className="text-center">
-            <HiOutlineExclamationCircle className="text-5xl text-gray-200 dark:text-gray-200 mb-4 mx-auto" />
-            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">Are you sure you want to delete your account</h3>
-            <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={handleDeleteUser}>Yes I'm Sure</Button>
-              <Button color="gray" onClick={() => setShowModal(false)}>No, Cancel</Button>
-            </div>
-          </div>
-        </Modal.Body>
-      </Modal>
 
+      <PopupModal showModal={showModal} onClose={() => setShowModal(false)} onConfirm={handleDeleteUser} title="Are you sure you want to delete your account" />
 
     </div >
   );
