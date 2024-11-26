@@ -9,6 +9,7 @@ const CreatePost = () => {
   const navigate = useNavigate();
   const loadingBarRef = useRef(null);
 
+  const [showmore, setShowmore] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     category: 'uncategorized',
