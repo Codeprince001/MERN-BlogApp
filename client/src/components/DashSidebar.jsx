@@ -5,6 +5,7 @@ import { IoDocumentText, IoLogOutOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { signoutSuccess } from "../redux/features/users/userSlice";
+import { HiOutlineUser } from "react-icons/hi";
 
 
 
@@ -58,6 +59,9 @@ const DashSidebar = () => {
               </Sidebar.Item>
               <Sidebar.Item onClick={() => navigate("/create-post")} icon={FaRegEdit} >
                 Create post
+              </Sidebar.Item>
+              <Sidebar.Item onClick={() => navigate("/dashboard?tab=users")} icon={HiOutlineUser} >
+                Users
               </Sidebar.Item>
             </>
           )}
