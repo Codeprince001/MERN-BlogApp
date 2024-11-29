@@ -6,5 +6,6 @@ import Profile from "./Profile";
 import DashSidebar from "./DashSidebar";
 import AdminPrivateRoute from "./AdminPrivateRoute.jsx";
 import DashPosts from "./DashPosts.jsx";
+import DashUsers from "./DashUsers.jsx";
 
-export { DashPosts, Header, Footer, Oauth, PrivateRoute, DashSidebar, Profile, AdminPrivateRoute };
+export { DashPosts, Header, Footer, Oauth, PrivateRoute, DashSidebar, Profile, AdminPrivateRoute, DashUsers };
