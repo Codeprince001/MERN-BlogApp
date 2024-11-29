@@ -79,7 +79,7 @@ export const updateUserProfile = async (req, res) => {
 };
 
 export const deleteUser = async (req, res, next) => {
-  if (req.user.id != req.params.userId) {
+  if (!req.user.isAdmin && req.user.id != req.params.userId) {
     return next(errorHandler(403, "You are not allowed to delete this user"));
   }
   try {
@@ -113,7 +113,7 @@ export const getUsers = async (req, res, next) => {
 
     const users = await User.find()
       .select("-password")
-      .sort({ createdAt: sortDirection })
+      .sort({ createdAt: sortDirection, isAdmin: -1 })
       .skip(startIndex)
       .limit(limit);
 
@@ -138,3 +138,4 @@ export const getUsers = async (req, res, next) => {
     next(error);
   }
 };
+
