@@ -2,17 +2,18 @@ import { Spinner } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { fetchPost } from '../redux/features/posts/postSlice';
 
 
 function Post() {
   const { postSlug } = useParams();
-  const { loading, error, posts } = useSelector((state) => state.posts);
+  const { loading, error, posts } = useSelector((state) => state.post);
   const dispatch = useDispatch();
-  console.log(posts);
 
   useEffect(() => {
-    if (!posts[postSlug]) {
-      dispatch(fetchpost(postSlug));
+    if (!posts || !posts[postSlug]) {
+      console.log("Post", posts, "postslug",);
+      dispatch(fetchPost(postSlug));
     }
   }, [postSlug, dispatch, posts]);
 
