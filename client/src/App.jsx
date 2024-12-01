@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import { Home, About, Dashboard, Project, Signin, Signup, CreatePost, UpdatePost } from "./pages";
+import { Home, About, Dashboard, Project, Signin, Signup, CreatePost, UpdatePost, Post } from "./pages";
 import { AdminPrivateRoute, DashUsers, Footer, Header, PrivateRoute } from "./components";
 
 const App = () => {
@@ -21,6 +21,8 @@ const App = () => {
           <Route path="/update-post/:postId" element={<UpdatePost />} />
         </Route>
         <Route path="/projects" element={<Project />} />
+        <Route path="/post/:postSlug" element={<Post />} />
+
       </Routes>
       <Footer />
     </BrowserRouter>
