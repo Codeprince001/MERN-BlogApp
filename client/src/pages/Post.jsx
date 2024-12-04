@@ -20,7 +20,7 @@ function Post() {
 
   if (loading) return (
     <div className='flex justify-center items-center min-h-screen'>
-      <Spinner size='xl' />
+      <Spinner size='xs' />
     </div>
   );
   return (
