@@ -7,16 +7,29 @@ import { fetchPost } from '../redux/features/posts/postSlice';
 
 function Post() {
   const { postSlug } = useParams();
-  const { loading, error, posts } = useSelector((state) => state.post);
+  const [loading, setLoading] = useState(true);
+  const { posts } = useSelector((state) => state.post);
   const dispatch = useDispatch();
-  console.log(posts);
+  const post = posts[postSlug];
 
-  useEffect(() => {
-    if (!posts || !posts[postSlug]) {
-      console.log("Post", posts, "postslug",);
+
+
+  const fetchPostData = () => {
+    if (!post) {
       dispatch(fetchPost(postSlug));
     }
-  }, [postSlug, dispatch, posts]);
+  };
+
+  useEffect(() => {
+    fetchPostData();
+  }, [postSlug, dispatch]);
+
+  useEffect(() => {
+    if (post) {
+      setLoading(false);
+    }
+  }, [post]);
+
 
   if (loading) return (
     <div className='flex justify-center items-center min-h-screen'>
@@ -26,15 +39,15 @@ function Post() {
   return (
     <main className='p-3 flex flex-col max-w-6xl mx-auto min-h-screen'>
       <div className='text-3xl mt-10 p-3 text-center font-serif max-w-2xl mx-auto'>
-        {posts[postSlug]?.title}
+        {post.title}
       </div>
       <Link className='self-center mt-5' to={`/search?category=${posts[postSlug]?.category}`}><Button color='gray' pill size='xs'>{posts && posts[postSlug]?.category}</Button></Link>
-      <img src={posts && posts[postSlug]?.image} alt={posts[postSlug]?.title} className='mt-10 p-3 max-h-[600px] w-full object-cover md:max-w-[500px] mx-auto' />
+      <img src={post && post.image} alt={post.title} className='mt-10 p-3 max-h-[600px] w-full object-cover md:max-w-[500px] mx-auto' />
       <div className='flex justify-between p-3 border-b border-slate-500 mx-auto w-full max-w-2xl text-xs italic'>
-        <span>{posts && new Date(posts[postSlug]?.createdAt).toLocaleDateString()}</span>
-        <span>{(posts[postSlug]?.content?.length / 1000).toFixed(0)} mins read</span>
+        <span>{post && new Date(post.createdAt).toLocaleDateString()}</span>
+        <span>{(post?.content?.length / 1000).toFixed(0)} mins read</span>
       </div>
-      <div dangerouslySetInnerHTML={{ __html: posts && posts[postSlug]?.content }} className='post-content p-3 mx-auto w-full max-w-2xl'>
+      <div dangerouslySetInnerHTML={{ __html: post && post?.content }} className='post-content p-3 mx-auto w-full max-w-2xl'>
 
       </div>
     </main>
