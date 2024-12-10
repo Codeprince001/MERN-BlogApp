@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import { fetchPost } from '../redux/features/posts/postSlice';
+import CallToAction from '../components/CallToAction';
 
 
 function Post() {
@@ -49,6 +50,10 @@ function Post() {
       </div>
       <div dangerouslySetInnerHTML={{ __html: post && post?.content }} className='post-content p-3 mx-auto w-full max-w-2xl'>
 
+      </div>
+
+      <div className='max-w-4xl mx-auto'>
+        <CallToAction />
       </div>
     </main>
   );
