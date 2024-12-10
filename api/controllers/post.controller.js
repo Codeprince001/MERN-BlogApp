@@ -137,6 +137,9 @@ export const updatePost = async (req, res, next) => {
   if (!req.user.isAdmin || req.user.id != req.params.userId) {
     return next(403, "You are not allowed to update this post");
   }
+
+  const slug = req.body.title.split(" ").join("-").toLowerCase().replace(/[^a-zA-Z0-9]/g, "-");
+
   try {
     const updatedPost = await Post.findByIdAndUpdate(req.params.postId, {
       $set: {
@@ -144,6 +147,7 @@ export const updatePost = async (req, res, next) => {
         content: req.body.content,
         category: req.body.category,
         image: req.body.image,
+        slug
       }
     }, { new: true });
 
