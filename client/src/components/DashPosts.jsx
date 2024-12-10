@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Table } from "flowbite-react";
 import { Link } from "react-router-dom";
 import PopupModal from '../util/PopupModal';
 import LoadingBar from 'react-top-loading-bar';
+import { setPosts } from '../redux/features/posts/postSlice';
+import Skeleton from 'react-loading-skeleton'; // Import Skeleton
+import { Button, Spinner } from 'flowbite-react';
 
 
 
@@ -13,7 +16,12 @@ const DashPosts = () => {
   const [showmore, setShowmore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [postToDelete, setPostToDelete] = useState();
-  const { currentUser, error, loading } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
+  const [loading, setLoading] = useState(true);
+
+
+  const dispatch = useDispatch();
+
 
   const loadingBarRef = useRef(null);
 
@@ -22,10 +30,14 @@ const DashPosts = () => {
 
     const fetchPosts = async () => {
       try {
+        setLoading(true);
         const res = await fetch(`/api/post/getPosts?userId=${currentUser._id}`);
         const data = await res.json();
         if (res.ok) {
           setUserPosts(data.posts);
+          dispatch(setPosts(data.posts)); // Dispatch action to update Redux state
+          setLoading(false);
+          console.log(data.posts);
           if (data.posts.length < 9) {
             setShowmore(false);
           }
@@ -111,9 +123,10 @@ const DashPosts = () => {
           </Table>
           {showmore && <button onClick={handleShowMore} className="w-full text-teal-500 items-center text-center text-sm py-7 mx-auto">Show more</button>}
         </div>
-        : (
-          <div className='flex justify-center items-center mx-auto my-auto'>
-            <p className='text-4xl'>No Post Yet!</p>
+        : (loading &&
+          <div className='flex flex-col justify-center items-center min-h-screen'>
+            <Spinner size='lg' />
+            <div>Fetching Posts</div>
           </div>
         )}
       <PopupModal showModal={showModal} onClose={() => setShowModal(false)} onConfirm={handleDeletePost} title="Are you sure you want to delete post" />
