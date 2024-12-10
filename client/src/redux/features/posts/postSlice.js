@@ -24,6 +24,32 @@ const postsSlice = createSlice({
     posts: {}
   },
   reducers: {
+    setPost: (state, action) => {
+      const postsArray = action.payload; // Assuming payload is an array of posts
+      if (!state.posts) {
+        state.posts = {};
+      }
+      postsArray.forEach(post => {
+        if (post.slug) {
+          state.posts[post.slug] = post; // Use a unique identifier (e.g., slug) as the key
+        } else {
+          console.log("Post slug not in Post");
+        }
+      });
+    },
+    getPostStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    getPostSuccess: (state, action) => {
+      state.posts = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    getPostFailure: (state, action) => {
+      state.loading = false,
+        state.error = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -42,5 +68,8 @@ const postsSlice = createSlice({
       });
   },
 });
+
+export const { setPosts, getPostFailure, getPostStart, getPostSuccess } = postsSlice.actions;
+
 
 export default postsSlice.reducer;
