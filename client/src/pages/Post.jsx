@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import { fetchPost } from '../redux/features/posts/postSlice';
 import CallToAction from '../components/CallToAction';
+import CommentSection from '../components/CommentSection';
 
 
 function Post() {
@@ -55,6 +56,7 @@ function Post() {
       <div className='max-w-4xl mx-auto'>
         <CallToAction />
       </div>
+      <CommentSection postId={post._id} />
     </main>
   );
 }
