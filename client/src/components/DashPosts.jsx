@@ -5,8 +5,7 @@ import { Link } from "react-router-dom";
 import PopupModal from '../util/PopupModal';
 import LoadingBar from 'react-top-loading-bar';
 import { setPosts } from '../redux/features/posts/postSlice';
-import Skeleton from 'react-loading-skeleton'; // Import Skeleton
-import { Button, Spinner } from 'flowbite-react';
+import { Spinner } from 'flowbite-react';
 
 
 
