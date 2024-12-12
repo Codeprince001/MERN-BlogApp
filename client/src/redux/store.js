@@ -1,6 +1,7 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import userReducer from './features/users/userSlice';
 import postsReducer from "./features/posts/postSlice";
+import commentsReducer from "./features/comments/CommentSlice";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import persistStore from 'redux-persist/es/persistStore';
@@ -10,7 +11,8 @@ import expireInTransfrom from "redux-persist-transform-expire-in";
 const rootReducer = combineReducers({
   user: userReducer,
   post: postsReducer,
-  theme: themeReducer
+  theme: themeReducer,
+  comment: commentsReducer
 });
 
 const expiresIn = 24 * 60 * 60 * 1000;
@@ -31,6 +33,11 @@ const persistConfig = {
       loading: false,
       error: null,
       posts: {}
+    },
+    comment: {
+      loading: false,
+      error: null,
+      comments: {}
     }
   })],
 };
