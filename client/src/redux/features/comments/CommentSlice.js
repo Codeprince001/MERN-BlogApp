@@ -9,7 +9,7 @@ export const fetchComment = createAsyncThunk(
       if (!response.ok) {
         return rejectWithValue("Failed to load comment");
       }
-      return data;
+      return { postId, comments: data };
     } catch (error) {
       return rejectWithValue("Error Fetching comments");
     }
@@ -25,35 +25,16 @@ const commentsSlice = createSlice({
   },
   reducers: {
     setComments: (state, action) => {
-      const commentsArray = action.payload; // Assuming payload is an array of comments
-
-      if (!state.comments) {
-        state.comments = {}; // Initialize the comments object
-      }
-
-      commentsArray.forEach((comment) => {
-        const { postId } = comment; // Extract postId from comment
-        if (postId) {
-          // Initialize the array for the postId if it doesn't already exist
-          if (!state.comments[postId]) {
-            state.comments[comment.postId] = [];
-          }
-          // Add the comment to the array
-          state.comments[comment.postId].push(comment.postId);
-        } else {
-          console.log("comment missing postId:", comment);
-        }
-      });
+      const { postId, comments } = action.payload;
+      state.comments[postId] = comments;
     },
     addComment: (state, action) => {
       const newComment = action.payload;
       if (newComment.postId) {
-        // Ensure state.comments[postId] is an array
         if (!state.comments[newComment.postId]) {
-          state.comments[newComment.postId] = [];
+          state.comments[newComment.postId] = []; // Initialize array if it doesn't exist
         }
-        // Add the new comment to the array
-        state.comments[newComment.postId].push(newComment);
+        state.comments[newComment.postId].push(newComment); // Add new comment to the array
       }
     },
   },
@@ -75,7 +56,7 @@ const commentsSlice = createSlice({
   },
 });
 
-export const { setComments } = commentsSlice.actions;
+export const { setComments, addComment } = commentsSlice.actions;
 
 
 export default commentsSlice.reducer;
