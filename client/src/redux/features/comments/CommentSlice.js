@@ -37,6 +37,17 @@ const commentsSlice = createSlice({
         state.comments[newComment.postId].push(newComment); // Add new comment to the array
       }
     },
+    updateCommentLikes: (state, action) => {
+      const { commentId, likes, numberOfLikes, postId } = action.payload;
+      const postComments = state.comments[postId]?.comments?.comments;
+      if (postComments) {
+        const comment = postComments.find((c) => c._id === commentId);
+        if (comment) {
+          comment.likes = likes;
+          comment.numberOfLikes = numberOfLikes;
+        }
+      }
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -56,7 +67,7 @@ const commentsSlice = createSlice({
   },
 });
 
-export const { setComments, addComment } = commentsSlice.actions;
+export const { setComments, addComment, updateCommentLikes } = commentsSlice.actions;
 
 
 export default commentsSlice.reducer;
