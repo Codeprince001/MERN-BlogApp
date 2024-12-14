@@ -6,6 +6,7 @@ export const fetchPost = createAsyncThunk(
     try {
       const response = await fetch(`/api/post/getPosts?slug=${slug}`);
       const data = await response.json();
+      console.log(data);
       if (!response.ok) {
         return rejectWithValue("Failed to load Post");
       }
@@ -21,10 +22,12 @@ const postsSlice = createSlice({
   initialState: {
     error: null,
     loading: false,
-    posts: {}
+    posts: {},
+    fetchedPost: []
   },
   reducers: {
-    setPost: (state, action) => {
+    setPosts: (state, action) => {
+      state.fetchedPost = { ...action.payload };
       const postsArray = action.payload; // Assuming payload is an array of posts
       if (!state.posts) {
         state.posts = {};
@@ -37,19 +40,20 @@ const postsSlice = createSlice({
         }
       });
     },
-    getPostStart: (state) => {
-      state.loading = true;
-      state.error = null;
+    appendPosts: (state, action) => {
+      state.fetchedPost = [...state.fetchedPost, ...action.payload]; // Append new posts to fetchedPost array
+      const postsArray = action.payload;
+      postsArray.forEach(post => {
+        if (post.slug) {
+          state.posts[post.slug] = post; // Add new posts to posts object
+        }
+      });
     },
-    getPostSuccess: (state, action) => {
-      state.posts = action.payload;
-      state.loading = false;
-      state.error = null;
+    deletePost: (state, action) => {
+      state.fetchedPost = state.fetchedPost.filter((post) => post._id !== action.payload);
+      delete state.posts[action.payload]; // Also remove from the posts object
     },
-    getPostFailure: (state, action) => {
-      state.loading = false,
-        state.error = action.payload;
-    },
+
   },
   extraReducers: (builder) => {
     builder
@@ -69,7 +73,7 @@ const postsSlice = createSlice({
   },
 });
 
-export const { setPosts, getPostFailure, getPostStart, getPostSuccess } = postsSlice.actions;
+export const { setPosts, appendPosts, deletePost } = postsSlice.actions;
 
 
 export default postsSlice.reducer;
