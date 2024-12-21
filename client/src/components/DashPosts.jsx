@@ -17,7 +17,6 @@ const DashPosts = () => {
   const [postToDelete, setPostToDelete] = useState();
   const { currentUser } = useSelector((state) => state.user);
   const { fetchedPost } = useSelector((state) => state.post);
-  console.log("Fetched Post", fetchedPost);
   const [loading, setLoading] = useState(true);
 
 
@@ -34,12 +33,10 @@ const DashPosts = () => {
         setLoading(true);
         const res = await fetch(`/api/post/getPosts?userId=${currentUser._id}`);
         const data = await res.json();
-        console.log(data.posts);
         if (res.ok) {
           dispatch(setPosts(data.posts)); // Dispatch action to update Redux state
           setUserPosts(data.posts);
           setLoading(false);
-          console.log(data.posts);
           if (data.posts.length < 9) {
             setShowmore(false);
           }
