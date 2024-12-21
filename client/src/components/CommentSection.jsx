@@ -4,13 +4,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import LoadingBar from 'react-top-loading-bar';
-import { fetchComment, updateCommentLikes } from '../redux/features/comments/CommentSlice';
+import { editComment, fetchComment, updateCommentLikes } from '../redux/features/comments/CommentSlice';
 import Comments from './Comments';
 
 const CommentSection = ({ postId }) => {
   const { currentUser } = useSelector(state => state.user);
   const { comments, loading, error } = useSelector((state) => state.comment);
   const postcomments = comments[postId]?.comments || [];
+  console.log(postcomments);
 
   const [comment, setComment] = useState("");
   const [commentError, setCommentError] = useState(null);
@@ -47,7 +48,7 @@ const CommentSection = ({ postId }) => {
       const data = await res.json();
       console.log("Data: ", data);
       if (res.ok) {
-        setComment("");
+        // setComment("");
         setCommentError(null);
         loadingBarRef.current.complete();
         dispatch(fetchComment(postId)); // Re-fetch all comments for this post
@@ -73,6 +74,15 @@ const CommentSection = ({ postId }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleEdit = async (comment, editedContent) => {
+    console.log("Handle Edit Comment", comment);
+    dispatch(editComment({
+      postId,
+      commentId: comment._id,
+      content: editedContent
+    }));
   };
 
   return (
@@ -120,7 +130,7 @@ const CommentSection = ({ postId }) => {
             </div>
             {
               postcomments.map(comment => (
-                <Comments key={comment._id} comment={comment} onLike={handleLike} />
+                <Comments key={comment._id} comment={comment} onLike={handleLike} onEdit={handleEdit} />
               ))
             }
           </>
