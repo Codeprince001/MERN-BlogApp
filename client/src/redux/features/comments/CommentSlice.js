@@ -6,10 +6,11 @@ export const fetchComment = createAsyncThunk(
     try {
       const response = await fetch(`/api/comment/getPostComments/${postId}`);
       const data = await response.json();
+      console.log("Comment data", data);
       if (!response.ok) {
         return rejectWithValue("Failed to load comment");
       }
-      return { postId, comments: data };
+      return { postId, comments: data.comments };
     } catch (error) {
       return rejectWithValue("Error Fetching comments");
     }
@@ -32,14 +33,14 @@ const commentsSlice = createSlice({
       const newComment = action.payload;
       if (newComment.postId) {
         if (!state.comments[newComment.postId]) {
-          state.comments[newComment.postId] = []; // Initialize array if it doesn't exist
+          state.comments[newComment.postId] = { comments: [] };// Initialize array if it doesn't exist
         }
-        state.comments[newComment.postId].push(newComment); // Add new comment to the array
+        state.comments[newComment.postId].comments.push(newComment); // Add new comment to the array
       }
     },
     updateCommentLikes: (state, action) => {
       const { commentId, likes, numberOfLikes, postId } = action.payload;
-      const postComments = state.comments[postId]?.comments?.comments;
+      const postComments = state.comments[postId]?.comments;
       if (postComments) {
         const comment = postComments.find((c) => c._id === commentId);
         if (comment) {
@@ -58,7 +59,10 @@ const commentsSlice = createSlice({
       .addCase(fetchComment.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.comments[action.payload.postId] = action.payload;
+        const { postId, comments } = action.payload;
+        state.comments[postId] = {
+          comments: comments || [], // Ensure comments is an array
+        };
       })
       .addCase(fetchComment.rejected, (state, action) => {
         state.loading = false;
