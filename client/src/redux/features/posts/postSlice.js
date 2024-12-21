@@ -6,7 +6,6 @@ export const fetchPost = createAsyncThunk(
     try {
       const response = await fetch(`/api/post/getPosts?slug=${slug}`);
       const data = await response.json();
-      console.log(data);
       if (!response.ok) {
         return rejectWithValue("Failed to load Post");
       }
