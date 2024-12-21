@@ -9,8 +9,8 @@ import Comments from './Comments';
 
 const CommentSection = ({ postId }) => {
   const { currentUser } = useSelector(state => state.user);
-  const { comments } = useSelector((state) => state.comment);
-  const postcomments = comments[postId]?.comments?.comments;
+  const { comments, loading, error } = useSelector((state) => state.comment);
+  const postcomments = comments[postId]?.comments || [];
 
   const [comment, setComment] = useState("");
   const [commentError, setCommentError] = useState(null);
@@ -20,7 +20,7 @@ const CommentSection = ({ postId }) => {
   const navigate = useNavigate();
 
   const fetchCommentData = () => {
-    if (!postcomments) {
+    if (!comments[postId]) {
       dispatch(fetchComment(postId));
     }
   };
