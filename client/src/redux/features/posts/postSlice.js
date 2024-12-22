@@ -22,7 +22,8 @@ const postsSlice = createSlice({
     error: null,
     loading: false,
     posts: {},
-    fetchedPost: []
+    fetchedPost: [],
+    recentPosts: []
   },
   reducers: {
     setPosts: (state, action) => {
@@ -52,6 +53,9 @@ const postsSlice = createSlice({
       state.fetchedPost = state.fetchedPost.filter((post) => post._id !== action.payload);
       delete state.posts[action.payload]; // Also remove from the posts object
     },
+    setRecentPosts: (state, action) => {
+      state.recentPosts = action.payload; // Update the recentPost field
+    },
 
   },
   extraReducers: (builder) => {
@@ -72,7 +76,7 @@ const postsSlice = createSlice({
   },
 });
 
-export const { setPosts, appendPosts, deletePost } = postsSlice.actions;
+export const { setPosts, appendPosts, deletePost, setRecentPosts } = postsSlice.actions;
 
 
 export default postsSlice.reducer;
