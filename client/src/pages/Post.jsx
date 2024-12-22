@@ -2,15 +2,17 @@ import { Button, Spinner } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { fetchPost } from '../redux/features/posts/postSlice';
+import { fetchPost, setRecentPosts } from '../redux/features/posts/postSlice';
 import CallToAction from '../components/CallToAction';
 import CommentSection from '../components/CommentSection';
+import RecentArticles from '../components/RecentArticles';
 
 
 function Post() {
   const { postSlug } = useParams();
   const [loading, setLoading] = useState(true);
   const { posts } = useSelector((state) => state.post);
+  const { recentPosts } = useSelector((state) => state.post);
   const dispatch = useDispatch();
   const post = posts[postSlug];
 
@@ -31,6 +33,23 @@ function Post() {
       setLoading(false);
     }
   }, [post]);
+
+  useEffect(() => {
+    const fetchRecentPosts = async () => {
+      try {
+        const res = await fetch(`/api/post/getPosts?limit=3`);
+        const data = await res.json();
+        console.log("recentPost", data);
+        if (res.ok) {
+          dispatch(setRecentPosts(data.posts));
+        }
+      } catch (error) {
+        console.error("Failed to fetch recent posts:", error);
+      }
+    };
+
+    fetchRecentPosts();
+  }, []);
 
 
   if (loading) return (
@@ -57,6 +76,7 @@ function Post() {
         <CallToAction />
       </div>
       <CommentSection postId={post._id} />
+      <RecentArticles recentPosts={recentPosts} />
     </main>
   );
 }
