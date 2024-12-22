@@ -7,7 +7,7 @@ import LoadingBar from 'react-top-loading-bar';
 
 
 
-const Comments = ({ comment, onLike, onEdit }) => {
+const Comments = ({ comment, onLike, onEdit, onDelete }) => {
   const [user, setUser] = useState({});
   const { currentUser } = useSelector(state => state.user);
   const [isEditing, setIsEditing] = useState(false);
@@ -99,9 +99,14 @@ const Comments = ({ comment, onLike, onEdit }) => {
                   }</p>
                   {
                     currentUser && (currentUser._id === comment.userId || currentUser.isAdmin) && (
-                      <button type='button' className='text-gray-400 hover:text-blue-500' onClick={handleEdit}>
-                        Edit
-                      </button>
+                      <div>
+                        <button type='button' className='text-gray-400 hover:text-blue-500' onClick={handleEdit}>
+                          Edit
+                        </button>
+                        <button type='button' className='text-red-400 hover:text-red-500 ml-3' onClick={() => onDelete(comment._id)}>
+                          Delete
+                        </button>
+                      </div>
                     )
                   }
                 </div>
