@@ -4,14 +4,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import LoadingBar from 'react-top-loading-bar';
-import { editComment, fetchComment, updateCommentLikes } from '../redux/features/comments/CommentSlice';
+import { deleteComment, editComment, fetchComment, updateCommentLikes } from '../redux/features/comments/CommentSlice';
 import Comments from './Comments';
+import PopupModal from '../util/PopupModal';
 
 const CommentSection = ({ postId }) => {
   const { currentUser } = useSelector(state => state.user);
-  const { comments, loading, error } = useSelector((state) => state.comment);
+  const { comments } = useSelector((state) => state.comment);
   const postcomments = comments[postId]?.comments || [];
-  console.log(postcomments);
+  const [commentToDelete, setCommentToDelete] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const [comment, setComment] = useState("");
   const [commentError, setCommentError] = useState(null);
@@ -85,6 +87,27 @@ const CommentSection = ({ postId }) => {
     }));
   };
 
+  const handleDelete = async (commentId) => {
+    try {
+      if (!currentUser) {
+        navigate("/signin");
+      }
+      const res = await fetch(`/api/comment/deleteComment/${commentId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        dispatch(deleteComment({ postId, commentId })); // Optimistic update
+        setShowModal(false);
+        setCommentToDelete(null);
+      } else {
+        console.error("Failed to delete comment");
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
   return (
     <div className='max-w-2xl mx-auto p-3 w-full'>
       <LoadingBar color="#4F46E5" ref={loadingBarRef} height={3} />
@@ -130,12 +153,24 @@ const CommentSection = ({ postId }) => {
             </div>
             {
               postcomments.map(comment => (
-                <Comments key={comment._id} comment={comment} onLike={handleLike} onEdit={handleEdit} />
+                <Comments key={comment._id} comment={comment} onLike={handleLike} onEdit={handleEdit}
+                  onDelete={(commentId) => {
+                    setShowModal(true);
+                    setCommentToDelete(commentId);
+                  }}
+                  commentId={comment._id}
+                />
               ))
             }
           </>
         )
       }
+      <PopupModal showModal={showModal} onClose={() => setShowModal(false)} onConfirm={() => {
+        if (commentToDelete) {
+          handleDelete(commentToDelete);
+        }
+      }} title="Are you sure you want to delete comment" />
+
     </div>
   );
 };
