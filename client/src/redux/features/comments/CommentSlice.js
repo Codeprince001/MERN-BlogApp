@@ -57,6 +57,12 @@ const commentsSlice = createSlice({
         postComments[commentIndex].content = content;
       }
     },
+    deleteComment: (state, action) => {
+      const { postId, commentId } = action.payload;
+      const postComments = state.comments[postId]?.comments || [];
+      state.comments[postId].comments = postComments.filter((c) => c._id !== commentId);
+    },
+
   },
   extraReducers: (builder) => {
     builder
@@ -79,7 +85,7 @@ const commentsSlice = createSlice({
   },
 });
 
-export const { setComments, addComment, updateCommentLikes, editComment } = commentsSlice.actions;
+export const { setComments, addComment, updateCommentLikes, editComment, deleteComment } = commentsSlice.actions;
 
 
 export default commentsSlice.reducer;
