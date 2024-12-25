@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home, About, Dashboard, Project, Signin, Signup, CreatePost, UpdatePost, Post } from "./pages";
 import { AdminPrivateRoute, DashUsers, Footer, Header, PrivateRoute } from "./components";
 import ScrollToTop from "./components/ScrollToTop";
+import Search from "./pages/Search";
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
         </Route>
         <Route path="/projects" element={<Project />} />
         <Route path="/post/:postSlug" element={<Post />} />
+        <Route path="search" element={<Search />} />
 
       </Routes>
       <Footer />
