@@ -40,11 +40,7 @@ const Signup = () => {
         setLoading(false);
         return;
       }
-      if (res.ok) {
-        navigate("/");
-      }
-
-
+      navigate("/");
       setLoading(false);
     }
 

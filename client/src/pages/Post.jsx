@@ -39,7 +39,6 @@ function Post() {
       try {
         const res = await fetch(`/api/post/getPosts?limit=3`);
         const data = await res.json();
-        console.log("recentPost", data);
         if (res.ok) {
           dispatch(setRecentPosts(data.posts));
         }
