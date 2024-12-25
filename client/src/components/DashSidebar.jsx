@@ -1,6 +1,6 @@
 import { Sidebar } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { FaRegEdit, FaUser } from "react-icons/fa";
+import { FaChartPie, FaRegEdit, FaUser } from "react-icons/fa";
 import { IoChatbox, IoDocumentText, IoLogOutOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -54,6 +54,9 @@ const DashSidebar = () => {
           </Sidebar.Item>
           {currentUser.isAdmin && (
             <>
+              <Sidebar.Item onClick={() => navigate("/dashboard?tab=dashboard-info")} active={tab === "dashboard-info"} icon={FaChartPie} >
+                Dashboard
+              </Sidebar.Item>
               <Sidebar.Item onClick={() => navigate("/dashboard?tab=posts")} active={tab === "posts"} icon={IoDocumentText} >
                 Posts
               </Sidebar.Item>

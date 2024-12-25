@@ -50,7 +50,7 @@ const CommentSection = ({ postId }) => {
       const data = await res.json();
       console.log("Data: ", data);
       if (res.ok) {
-        // setComment("");
+        setComment("");
         setCommentError(null);
         loadingBarRef.current.complete();
         dispatch(fetchComment(postId)); // Re-fetch all comments for this post
