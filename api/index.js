@@ -43,6 +43,15 @@ app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-app.listen(3000, () => {
+// Serve static files from client build
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Catch-all for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
+app.listen(process.env.PORT, () => {
   console.log("Server running on port 3000");
 });
+
