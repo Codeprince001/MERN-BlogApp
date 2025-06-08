@@ -38,14 +38,14 @@ app.use(errorMiddlewareHandler);
 // ✅ Serve Vite frontend
 app.use(express.static(path.join(__dirname, 'client/dist')));
 
-// ✅ React router fallback
+// Serve frontend static files (Vite build)
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// React SPA fallback (MUST come after static middleware)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
-});
 
 
 app.listen(process.env.PORT || 3000, () => {
