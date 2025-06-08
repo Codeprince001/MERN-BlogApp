@@ -24,8 +24,6 @@ mongoose.connect(process.env.MONGODb_URI)
     console.log(err);
   });
 
-const __dirname = path.resolve();
-
 app.use("/api/user", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/post", postRoutes);
