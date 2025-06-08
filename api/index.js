@@ -33,9 +33,6 @@ app.use("/api/comment", commentRoutes);
 
 app.use(errorMiddlewareHandler);
 
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
-});
 
 // Serve static files from client build
 app.use(express.static(path.join(__dirname, 'client', 'dist')));
@@ -44,6 +41,11 @@ app.use(express.static(path.join(__dirname, 'client', 'dist')));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client','dist', 'index.html'));
 });
+
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("Server running on port 3000");
