@@ -34,12 +34,13 @@ app.use("/api/comment", commentRoutes);
 app.use(errorMiddlewareHandler);
 
 
-// Serve static files from client build
-app.use(express.static(path.join(__dirname, 'client', 'dist')));
 
-// Catch-all for client-side routing
+// ✅ Serve Vite frontend
+app.use(express.static(path.join(__dirname, 'client/dist')));
+
+// ✅ React router fallback
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client','dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
 });
 
 app.use((req, res) => {
