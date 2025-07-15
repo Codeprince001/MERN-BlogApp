@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node api/index.js",
      "heroku-prebuild": "cd api/client && npm install --include=dev",
-    "heroku-postbuild": "cd api/client && npx vite build",
+    "heroku-postbuild": "cd api/client && npm run build",
     "start": "node api/index.js"
   },
   "keywords": [],

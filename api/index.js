@@ -8,7 +8,7 @@ import CookieParser from "cookie-parser";
 import postRoutes from "./routes/post.route.js";
 import commentRoutes from "./routes/comment.route.js";
 import path from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
@@ -16,45 +16,36 @@ const app = express();
 app.use(express.json());
 app.use(CookieParser());
 
+// Fix __dirname for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 mongoose.connect(process.env.MONGODb_URI)
   .then(() => {
     console.log("Connected to MongoDb Server");
-  }
-  ).catch((err) => {
+  })
+  .catch((err) => {
     console.log(err);
   });
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+// API routes
 app.use("/api/user", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
 
-app.use(express.static(path.join(__dirname, "client", "dist")));
+// Serve frontend static files (Vite build)
+app.use(express.static(path.join(__dirname, 'client', 'dist')));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+// React SPA fallback route (serves index.html for any other route)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
 });
 
-
+// Error handler middleware
 app.use(errorMiddlewareHandler);
 
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
-});
-
-// Serve static files from client build
-app.use(express.static(path.join(__dirname, 'client/dist')));
-
-// Catch-all for client-side routing
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
-});
-
+// Start server
 app.listen(process.env.PORT || 3000, () => {
   console.log("Server running on port 3000");
 });
-
