@@ -8,6 +8,7 @@ import CookieParser from "cookie-parser";
 import postRoutes from "./routes/post.route.js";
 import commentRoutes from "./routes/comment.route.js";
 import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
@@ -24,18 +25,20 @@ mongoose.connect(process.env.MONGODb_URI)
     console.log(err);
   });
 
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use("/api/user", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
 
-app.use(express.static(path.join(__dirname, "/client/dist")));
+app.use(express.static(path.join(__dirname, "client", "dist")));
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
 });
+
 
 app.use(errorMiddlewareHandler);
 
